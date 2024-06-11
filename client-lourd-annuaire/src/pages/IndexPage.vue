@@ -26,11 +26,20 @@
         option-label="label"
       />
   <div v-if="ajaxtrue && data">
+    <div v-if="!boolAdmin">
     <q-table 
     :rows="data"
     :columns="columnsUser"
-    />
+    /></div>
+    <div v-if="boolAdmin">
+    <q-table
+    :rows="data"
+    :columns="columnsAdmin"
+    /></div>
+    <div class="row items-center justify-evenly">
+      <q-btn label="accès administrateur" color="primary" class="q-mt-md" @click="isAdmin"/>
     </div>
+  </div>
   </q-page>
 </template>
 
@@ -50,10 +59,15 @@ const idService = ref(null);
 const rechercheNom = ref(null);
 const selectedService = ref(null);
 const selectedSite = ref(null);
+const boolAdmin = ref(false);
 
 onMounted(() => {
   ajaxCall();
 });
+
+function isAdmin() {
+  boolAdmin.value = !boolAdmin.value;
+}
 
 async function ajaxCall() {
   try {
@@ -72,6 +86,7 @@ async function ajaxCall() {
 }
 
 const columnsUser: QTableColumn[] = [
+
   {
     name: 'nom',
     required: true,
@@ -112,6 +127,68 @@ const columnsUser: QTableColumn[] = [
     name: 'service',
     align: 'left',
     label: 'Service',
+    field: (row) => row.service,
+    sortable: true
+  },
+];
+
+const columnsAdmin: QTableColumn[] = [
+
+  {
+    name: 'id',
+    required: true,
+    label: 'Id',
+    align: 'left',
+    field: (row) => row.id,
+    sortable: true
+  },
+  {
+    name: 'nom',
+    required: true,
+    label: 'Nom',
+    align: 'left',
+    field: (row) => row.nom,
+    sortable: true
+  },
+  {
+    name: 'prenom',
+    align: 'left',
+    label: 'Prénom',
+    field: (row) => row.prenom,
+    sortable: true
+  },
+  {
+    name: 'telephoneFixe',
+    align: 'left',
+    label: 'Téléphone Fixe',
+    field: (row) => row.telephoneFixe,
+    sortable: true
+  },
+  {
+    name: 'telephonePortable',
+    align: 'left',
+    label: 'Téléphone Portable',
+    field: (row) => row.telephonePortable,
+    sortable: true
+  },
+  {
+    name: 'ville',
+    align: 'left',
+    label: 'Ville',
+    field: (row) => row.ville,
+    sortable: true
+  },
+  {
+    name: 'service',
+    align: 'left',
+    label: 'Service',
+    field: (row) => row.service,
+    sortable: true
+  },
+  {
+    name: 'action',
+    align: 'left',
+    label: 'Action',
     field: (row) => row.service,
     sortable: true
   },
