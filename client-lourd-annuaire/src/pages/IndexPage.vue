@@ -35,7 +35,18 @@
     <q-table
     :rows="data"
     :columns="columnsAdmin"
-    /></div>
+    >
+    <template v-slot:body-cell-action="props">
+          <q-td :props="props">
+            <q-btn
+              color="grey"
+              label="Supprimer"
+              @click="deleteRow(props.row)"
+            />
+          </q-td>
+        </template>
+    </q-table>
+    </div>
     <div class="row items-center justify-evenly">
       <q-btn label="accès administrateur" color="primary" class="q-mt-md" @click="isAdmin"/>
     </div>
@@ -67,6 +78,12 @@ onMounted(() => {
 
 function isAdmin() {
   boolAdmin.value = !boolAdmin.value;
+}
+
+function deleteRow(row) {
+  api.delete('/employe/' + row.id).then(() => {
+    ajaxCall();
+  });
 }
 
 async function ajaxCall() {
@@ -187,10 +204,9 @@ const columnsAdmin: QTableColumn[] = [
   },
   {
     name: 'action',
-    align: 'left',
+    align: 'center',
     label: 'Action',
-    field: (row) => row.service,
-    sortable: true
+    field: 'action',
   },
 ];
 
