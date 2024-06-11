@@ -1,5 +1,30 @@
 <template>
   <q-page class="row items-center justify-evenly">
+      <q-input
+        class="col-4"
+        v-model="rechercheNom"
+        label="Rechercher par nom"
+      ></q-input>
+      <q-select
+        class="col-2"
+        v-model="selectedSite"
+        :options="siteOptions"
+        emit-value
+        map-options
+        label="Sélectionner un site"
+        option-value="id"
+        option-label="label"
+      />
+      <q-select
+        class="col-2"
+        v-model="selectedService"
+        :options="serviceOptions"
+        emit-value
+        map-options
+        label="Sélectionner un service"
+        option-value="id"
+        option-label="label"
+      />
   <div v-if="ajaxtrue && data">
     <q-table 
     :rows="data"
@@ -11,7 +36,7 @@
 
 <script setup lang="ts">
 import { QTableColumn } from 'quasar';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { api } from 'boot/axios';
 
 defineOptions({
@@ -20,6 +45,11 @@ defineOptions({
 
 const data = ref(null);
 const ajaxtrue = ref(false);
+const idSite = ref(null);
+const idService = ref(null);
+const rechercheNom = ref(null);
+const selectedService = ref(null);
+const selectedSite = ref(null);
 
 onMounted(() => {
   ajaxCall();
@@ -28,6 +58,11 @@ onMounted(() => {
 async function ajaxCall() {
   try {
     const response = await api.get('/global', {
+      params: {
+        nom: rechercheNom.value,
+        service: idService.value,
+        site: idSite.value,
+      },
     });
     data.value = response.data;
     ajaxtrue.value = true;
@@ -37,14 +72,6 @@ async function ajaxCall() {
 }
 
 const columnsUser: QTableColumn[] = [
-  {
-    name: 'id',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: (row) => row.id,
-    sortable: true
-  },
   {
     name: 'nom',
     required: true,
@@ -89,5 +116,43 @@ const columnsUser: QTableColumn[] = [
     sortable: true
   },
 ];
+
+const serviceOptions = [
+  { id: null, label: 'Tous' },
+  { id: 1, label: 'Comptabilité' },
+  { id: 2, label: 'Production' },
+  { id: 3, label: 'Accueil' },
+  { id: 4, label: 'Informatique' },
+  { id: 5, label: 'Commercial' },
+  { id: 6, label: 'Transport' },
+  { id: 7, label: 'Juridique' },
+];
+
+const siteOptions = [
+  { id: null, label: 'Tous' },
+  { id: 1, label: 'Paris' },
+  { id: 2, label: 'Nantes' },
+  { id: 3, label: 'Toulouse' },
+  { id: 4, label: 'Nice' },
+  { id: 5, label: 'Lille' },
+];
+
+watch(rechercheNom, () => {
+  ajaxtrue.value = false;
+  ajaxCall();
+});
+
+watch(selectedSite, () => {
+  idSite.value = selectedSite.value === null ? null : selectedSite.value;
+  ajaxtrue.value = false;
+  ajaxCall();
+});
+
+watch(selectedService, () => {
+  idService.value =
+    selectedService.value === null ? null : selectedService.value;
+  ajaxtrue.value = false;
+  ajaxCall();
+});
 
 </script>
