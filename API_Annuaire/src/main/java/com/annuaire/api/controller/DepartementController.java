@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin("http://localhost:9300")
 public class DepartementController {
 
     @Autowired
